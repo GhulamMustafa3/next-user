@@ -1,49 +1,21 @@
-import { User } from './types';
-import { seedUsers } from './users.seed';
+import { User } from "./types";
+import { seedUsers } from "./users.seed";
 
-class InMemoryDB {
-  private users: Map<string, User>;
+let users: User[] = [...seedUsers];
 
-  constructor() {
-    this.users = new Map();
-    this.initialize();
-  }
+export const getUsers = () => users;
 
-  private initialize() {
-    seedUsers.forEach(user => this.users.set(user.id, user));
-  }
+export const getUser = (id: string) =>
+  users.find((u) => u.id === id);
 
-  getAllUsers(): User[] {
-    return Array.from(this.users.values());
-  }
+export const addUser = (user: User) => {
+  users.push(user);
+};
 
-  getUserById(id: string): User | undefined {
-    return this.users.get(id);
-  }
+export const updateUser = (id: string, updated: User) => {
+  users = users.map((u) => (u.id === id ? updated : u));
+};
 
-  createUser(userData: Omit<User, 'id' | 'createdAt'>): User {
-    const id = `u-${Date.now()}`;
-    const newUser: User = {
-      ...userData,
-      id,
-      createdAt: new Date().toISOString(),
-    };
-    this.users.set(id, newUser);
-    return newUser;
-  }
-
-  updateUser(id: string, userData: Partial<User>): User | undefined {
-    const user = this.users.get(id);
-    if (!user) return undefined;
-
-    const updatedUser = { ...user, ...userData };
-    this.users.set(id, updatedUser);
-    return updatedUser;
-  }
-
-  deleteUser(id: string): boolean {
-    return this.users.delete(id);
-  }
-}
-
-export const db = new InMemoryDB();
+export const deleteUser = (id: string) => {
+  users = users.filter((u) => u.id !== id);
+};
