@@ -13,6 +13,7 @@ export default function AddUserPage() {
   
     const newUser = {
       id: `u-${Date.now()}`,
+    createdAt: new Date().toISOString(),
       ...newUserData,
     };
 
