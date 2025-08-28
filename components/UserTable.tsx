@@ -2,14 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useUsers } from "@/providers/UserProvider"; 
 
-export default function UserTable({ users }) {
-  const [list, setList] = useState(users);
-
-  const handleDelete = (id) => {
-    setList(list.filter((u) => u.id !== id));
-  };
+export default function UserTable() {
+  const { users, deleteUser } = useUsers(); 
+  
 
   return (
     <div className="mt-4 overflow-x-auto">
@@ -25,7 +22,7 @@ export default function UserTable({ users }) {
           </tr>
         </thead>
         <tbody>
-          {list.map((u) => (
+          {users.map((u) => (
             <tr key={u.id}>
               <td className="border p-2 text-center">
                 <Image
@@ -57,7 +54,7 @@ export default function UserTable({ users }) {
                   Edit
                 </Link>
                 <button
-                  onClick={() => handleDelete(u.id)}
+                  onClick={() => deleteUser(u.id)} 
                   className="text-red-600 hover:underline"
                 >
                   Delete
@@ -66,7 +63,7 @@ export default function UserTable({ users }) {
             </tr>
           ))}
 
-          {list.length === 0 && (
+          {users.length === 0 && (
             <tr>
               <td colSpan={6} className="border p-4 text-center text-gray-500">
                 No users found.
