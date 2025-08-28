@@ -1,19 +1,16 @@
 import Image from "next/image";
-import { getUser } from "@/lib/db";
 
-export default function UserDetailPage({ params }) {
-  const user = getUser(params.id);
-
+export default function UserDetail({ user }) {
   if (!user) {
     return (
-      <main>
+      <div>
         <h1 className="text-2xl font-bold">User not found</h1>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main>
+    <div>
       <h1 className="text-2xl font-bold">{user.name}</h1>
       <Image
         src={user.imageUrl}
@@ -24,6 +21,6 @@ export default function UserDetailPage({ params }) {
       />
       <p>Email: {user.email}</p>
       <p>Role: {user.role}</p>
-    </main>
+    </div>
   );
 }

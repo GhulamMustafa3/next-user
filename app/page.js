@@ -4,8 +4,11 @@ import Image from "next/image";
 import { getUsers } from "@/lib/db";
 
 
+
+
 export default function HomePage() {
   const users = getUsers();
+  
 
   return (
     <main>
