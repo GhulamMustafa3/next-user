@@ -1,4 +1,5 @@
-import { User } from './types';
+
+import { User } from "./types";
 
 export const seedUsers: User[] = [
   {
@@ -6,7 +7,7 @@ export const seedUsers: User[] = [
     name: 'Ayesha Khan',
     email: 'ayesha.khan@example.com',
     role: 'manager',
-    imageUrl: 'https://i.pravatar.cc/150?img=47',
+    imageUrl: 'https://tse1.mm.bing.net/th/id/OIP.PkFenohHn8RbSMjB8E4SZwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3',
     createdAt: new Date('2024-08-05T09:15:00Z').toISOString(),
   },
   {
@@ -14,7 +15,7 @@ export const seedUsers: User[] = [
     name: 'Bilal Subhani',
     email: 'bilal.subhani@example.com',
     role: 'admin',
-    imageUrl: 'https://i.pravatar.cc/150?img=12',
+    imageUrl: 'https://tse1.mm.bing.net/th/id/OIP.PkFenohHn8RbSMjB8E4SZwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3',
     createdAt: new Date('2024-09-12T10:30:00Z').toISOString(),
   },
   {
@@ -22,7 +23,7 @@ export const seedUsers: User[] = [
     name: 'Hamza Ahmed',
     email: 'hamza.ahmed@example.com',
     role: 'user',
-    imageUrl: 'https://i.pravatar.cc/150?img=33',
+    imageUrl: 'https://tse1.mm.bing.net/th/id/OIP.PkFenohHn8RbSMjB8E4SZwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3',
     createdAt: new Date('2025-02-20T14:00:00Z').toISOString(),
   },
 ];
