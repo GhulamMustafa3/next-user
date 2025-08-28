@@ -16,7 +16,8 @@ export default function EditUserPage() {
   }, [id, users]);
 
   const handleUpdate = (updatedData) => {
-    updateUser(id, updatedData);
+      if (!id) return;
+    updateUser(id as string, updatedData);
     router.push("/users");
   };
 

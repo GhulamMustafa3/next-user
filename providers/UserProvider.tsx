@@ -1,24 +1,35 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
-import { seedUsers } from "@/lib/users.seed"; 
+import { createContext, useContext, useState, ReactNode } from "react";
+import { seedUsers } from "@/lib/users.seed";
 
-const UsersContext = createContext();
 
-export const UsersProvider = ({ children }) => {
-  const [users, setUsers] = useState([...seedUsers]); 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  imageUrl: string;
+}
 
-  const addUser = (user) => {
-    setUsers((prev) => [...prev, user]);
-  };
 
-  const updateUser = (id, updated) => {
-    setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)));
-  };
+interface UsersContextType {
+  users: User[];
+  addUser: (user: User) => void;
+  updateUser: (id: string, updated: User) => void;
+  deleteUser: (id: string) => void;
+}
 
-  const deleteUser = (id) => {
-    setUsers((prev) => prev.filter((u) => u.id !== id));
-  };
+const UsersContext = createContext<UsersContextType | undefined>(undefined);
+
+export const UsersProvider = ({ children }: { children: ReactNode }) => {
+  const [users, setUsers] = useState<User[]>([...seedUsers]);
+
+  const addUser = (user: User) => setUsers(prev => [...prev, user]);
+  const updateUser = (id: string, updated: User) =>
+    setUsers(prev => prev.map(u => (u.id === id ? updated : u)));
+  const deleteUser = (id: string) =>
+    setUsers(prev => prev.filter(u => u.id !== id));
 
   return (
     <UsersContext.Provider value={{ users, addUser, updateUser, deleteUser }}>
@@ -27,7 +38,8 @@ export const UsersProvider = ({ children }) => {
   );
 };
 
-export const useUsers = () => {
+
+export const useUsers = (): UsersContextType => {
   const context = useContext(UsersContext);
   if (!context) throw new Error("useUsers must be used within a UsersProvider");
   return context;

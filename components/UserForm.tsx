@@ -1,8 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
+interface UserFormProps {
+  initialData?: {
+    name: string;
+    email: string;
+    role: string;
+    imageUrl: string;
+  };
+  onSubmit: (data: any) => void;
+  isEdit: boolean;
+}
 
-export default function UserForm({ initialData, onSubmit, isEdit }) {
+export default function UserForm({ initialData, onSubmit, isEdit }:UserFormProps) {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
