@@ -2,26 +2,59 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useUsers } from "@/providers/UserProvider";
-import UserForm from "@/components/UserForm"; 
+import UserForm from "@/components/UserForm";
+import { updateUser } from "@/lib/api/users";
+
+
+
 export default function EditUserPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { users, updateUser } = useUsers();
-  const [initialData, setInitialData] = useState(null);
+  const [initialData, setInitialData] = useState<any>(null);
+
 
   useEffect(() => {
-    const user = users.find((u) => u.id === id);
-    if (user) setInitialData(user);
-  }, [id, users]);
+    const fetchUserById = async () => {
+      try {
+        const res = await fetch(`http://localhost:8008/users/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch user");
+        const user = await res.json();
+        setInitialData(user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
 
-  const handleUpdate = (updatedData) => {
-      if (!id) return;
-    updateUser(id as string, updatedData);
-    router.push("/users");
+    if (id) fetchUserById();
+  }, [id]);
+
+  
+  const handleUpdate = async (updatedData: {
+    name: string;
+    email: string;
+    age: number;
+    role: string;
+    image_url: string;
+  }) => {
+    if (!id) return;
+
+    try {
+      const updatedUser = await updateUser(
+        id as string,
+        updatedData.name,
+        updatedData.email,
+        updatedData.age,
+        updatedData.role,
+        updatedData.image_url
+      );
+
+      console.log("User updated:", updatedUser);
+      router.push("/users");
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
   };
 
- 
   if (!initialData) return <p>Loading user data...</p>;
 
   return (
