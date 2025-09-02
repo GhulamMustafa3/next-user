@@ -34,10 +34,13 @@ export default function UserForm({ initialData, onSubmit, isEdit }: UserFormProp
 
   useEffect(() => {
     if (initialData) {
-      setFormData({
-        ...initialData,
-        role: initialData.role.toLowerCase(),
-      });
+     setFormData({
+      name: initialData.name ?? "",
+      email: initialData.email ?? "",
+      age: initialData.age ?? 18,
+      role: initialData.role?.toLowerCase() ?? "",
+      image_url: initialData.image_url ?? "",
+    });
     }
   }, [initialData]);
 
@@ -99,7 +102,7 @@ export default function UserForm({ initialData, onSubmit, isEdit }: UserFormProp
         {isEdit ? "Edit User" : "Add User"}
       </h2>
 
-      {/* Name */}
+     
       <div>
         <label className="block text-sm font-medium">Name</label>
         <input
@@ -113,7 +116,7 @@ export default function UserForm({ initialData, onSubmit, isEdit }: UserFormProp
         {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
       </div>
 
-      {/* Email */}
+     
       <div>
         <label className="block text-sm font-medium">Email</label>
         <input
@@ -127,7 +130,6 @@ export default function UserForm({ initialData, onSubmit, isEdit }: UserFormProp
         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
       </div>
 
-      {/* Age */}
       <div>
         <label className="block text-sm font-medium">Age</label>
         <input
@@ -141,7 +143,7 @@ export default function UserForm({ initialData, onSubmit, isEdit }: UserFormProp
         {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
       </div>
 
-      {/* Role */}
+      
       <div>
         <label className="block text-sm font-medium">Role</label>
         <select
@@ -160,13 +162,13 @@ export default function UserForm({ initialData, onSubmit, isEdit }: UserFormProp
         {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
       </div>
 
-      {/* Profile Image URL */}
+      
       <div>
         <label className="block text-sm font-medium">Profile Image URL</label>
         <input
           type="url"
           name="image_url"
-          value={formData.image_url}
+          value={formData.image_url|| ""}
           onChange={handleChange}
           className="w-full mt-1 p-2 border rounded-lg"
           placeholder="https://example.com/profile.jpg"

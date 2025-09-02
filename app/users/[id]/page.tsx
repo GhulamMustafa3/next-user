@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import UserDetail from "@/components/UserDetail";
 import { fetchUser } from "@/lib/api/users";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 
 export default function UserDetailPage() {
   const { id } = useParams(); 
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const{isChecking}=useAuthRedirect();
+
 
   useEffect(() => {
     const loadUser = async () => {
@@ -30,6 +33,10 @@ export default function UserDetailPage() {
         <p className="text-gray-500">Loading user details...</p>
       </main>
     );
+  }
+  if (isChecking) {
+ 
+    return <p className="p-4">Checking authentication...</p>;
   }
 
   return (

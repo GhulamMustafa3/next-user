@@ -3,32 +3,33 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import UserForm from "@/components/UserForm";
-import { updateUser } from "@/lib/api/users";
-
-
+import { fetchUser, updateUser } from "@/lib/api/users";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export default function EditUserPage() {
-  const { id } = useParams();
+  const { id } =useParams<{ id: string }>();
   const router = useRouter();
   const [initialData, setInitialData] = useState<any>(null);
-
+    const { isChecking } = useAuthRedirect();
 
   useEffect(() => {
-    const fetchUserById = async () => {
+    const getUser = async () => {
+      if (!id) return;
+
       try {
-        const res = await fetch(`http://localhost:8008/users/${id}`);
-        if (!res.ok) throw new Error("Failed to fetch user");
-        const user = await res.json();
+    
+        const users = await fetchUser();
+        const user = users.find((u: any) => u.id === id); 
+        if (!user) throw new Error("User not found");
         setInitialData(user);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
     };
 
-    if (id) fetchUserById();
+    getUser();
   }, [id]);
 
-  
   const handleUpdate = async (updatedData: {
     name: string;
     email: string;
@@ -40,7 +41,7 @@ export default function EditUserPage() {
 
     try {
       const updatedUser = await updateUser(
-        id as string,
+        id,
         updatedData.name,
         updatedData.email,
         updatedData.age,
@@ -56,6 +57,10 @@ export default function EditUserPage() {
   };
 
   if (!initialData) return <p>Loading user data...</p>;
+   if (isChecking) {
+ 
+    return <p className="p-4">Checking authentication...</p>;
+  }
 
   return (
     <div className="max-w-lg mx-auto mt-8">

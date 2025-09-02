@@ -3,9 +3,12 @@
 import UserForm from "@/components/UserForm";
 import { useRouter } from "next/navigation";
 import { createUser } from "@/lib/api/users";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export default function AddUserPage() {
   const router = useRouter();
+  const { isChecking } = useAuthRedirect();
+
 
   const handleUserAdded = async (newUserData: {
     name: string;
@@ -15,7 +18,7 @@ export default function AddUserPage() {
     image_url: string;
   }) => {
     try {
-      
+
       const newUser = await createUser(
         `u-${Date.now()}`,
         newUserData.name,
@@ -33,6 +36,10 @@ export default function AddUserPage() {
       console.error("Error adding user:", error);
     }
   };
+  if (isChecking) {
+
+    return <p className="p-4">Checking authentication...</p>;
+  }
 
   return (
     <main className="min-h-screen bg-gray-100 p-6">
