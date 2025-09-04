@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { useState, ChangeEvent, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
-        age:""
+        age: ""
     });
     const [message, setMessage] = useState("");
+    const router = useRouter();
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -19,25 +21,29 @@ export default function SignupPage() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        setMessage("");
 
         try {
             const res = await fetch("http://localhost:8008/api/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
+                credentials: "include", 
             });
 
             const data = await res.json();
 
             if (res.ok) {
-                setMessage("Signup successful ");
-                localStorage.setItem("token", data.token);
+                setMessage("Signup successful!");
                 console.log("User:", data.user);
+                
+              
+                router.push("/dashboard");
             } else {
-                setMessage(data.error || "Signup failed ");
+                setMessage(data.error || "Signup failed");
             }
         } catch (error) {
-            setMessage("Network error ");
+            setMessage("Network error. Please try again.");
         }
     };
 
@@ -78,7 +84,8 @@ export default function SignupPage() {
                     className="w-full p-2 mb-6 border rounded-lg"
                     required
                 />
-                 <input
+
+                <input
                     type="number"
                     name="age"
                     placeholder="Age"
@@ -97,7 +104,7 @@ export default function SignupPage() {
                 </button>
 
                 {message && <p className="mt-4 text-center">{message}</p>}
-               
+
                 <p className="mt-4 text-center">
                     Already have an account?{" "}
                     <Link href="/auth/login" className="text-blue-600 underline">

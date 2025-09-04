@@ -2,15 +2,18 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 
+interface User {
+  id?: string;
+  name: string;
+  email: string;
+  age: number;
+  role: string;
+  image_url: string;
+}
+
 interface UserFormProps {
-  initialData?: {
-    name: string;
-    email: string;
-    age: number;
-    role: string;
-    image_url: string;
-  };
-  onSubmit: (data: any) => void;
+  initialData?: User; // <-- add this
+  onSubmit: (data: User) => void;
   isEdit: boolean;
 }
 
@@ -23,30 +26,30 @@ interface FormErrors {
 }
 
 export default function UserForm({ initialData, onSubmit, isEdit }: UserFormProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<User>({
     name: "",
     email: "",
     age: 18,
     role: "",
     image_url: "",
   });
+
   const [errors, setErrors] = useState<FormErrors>({});
 
+  // Load initial data if editing
   useEffect(() => {
     if (initialData) {
-     setFormData({
-      name: initialData.name ?? "",
-      email: initialData.email ?? "",
-      age: initialData.age ?? 18,
-      role: initialData.role?.toLowerCase() ?? "",
-      image_url: initialData.image_url ?? "",
-    });
+      setFormData({
+        name: initialData.name ?? "",
+        email: initialData.email ?? "",
+        age: initialData.age ?? 18,
+        role: initialData.role?.toLowerCase() ?? "",
+        image_url: initialData.image_url ?? "",
+      });
     }
   }, [initialData]);
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -58,33 +61,10 @@ export default function UserForm({ initialData, onSubmit, isEdit }: UserFormProp
     e.preventDefault();
 
     const newErrors: FormErrors = {};
-    const nameRegex = /^[A-Za-z\s]{3,}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.(com|net|org|edu|gov|io|pk)$/i;
-    const urlRegex = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (!nameRegex.test(formData.name)) {
-      newErrors.name = "Name must be at least 3 letters and only alphabets";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Enter a valid email address";
-    }
-
-    if (!formData.age || formData.age < 18) {
-      newErrors.age = "Age must be 18 or above";
-    }
-
-    if (!formData.role) {
-      newErrors.role = "Role is required";
-    }
-
-    if (formData.image_url.trim() && !urlRegex.test(formData.image_url)) {
-      newErrors.image_url = "Enter a valid URL (http/https)";
-    }
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.age || formData.age < 18) newErrors.age = "Age must be 18+";
+    if (!formData.role) newErrors.role = "Role is required";
 
     setErrors(newErrors);
 
@@ -94,95 +74,61 @@ export default function UserForm({ initialData, onSubmit, isEdit }: UserFormProp
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto p-6 bg-white rounded-2xl shadow-md space-y-4"
-    >
-      <h2 className="text-xl font-bold">
-        {isEdit ? "Edit User" : "Add User"}
-      </h2>
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-white rounded-2xl shadow-md space-y-4">
+      <h2 className="text-xl font-bold">{isEdit ? "Edit User" : "Add User"}</h2>
 
-     
-      <div>
-        <label className="block text-sm font-medium">Name</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          className="w-full mt-1 p-2 border rounded-lg"
-          placeholder="Enter full name"
-        />
-        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-      </div>
+      <input
+        type="text"
+        name="name"
+        value={formData.name}
+        onChange={handleChange}
+        placeholder="Name"
+        className="w-full p-2 border rounded"
+      />
+      {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
 
-     
-      <div>
-        <label className="block text-sm font-medium">Email</label>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full mt-1 p-2 border rounded-lg"
-          placeholder="Enter email address"
-        />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-      </div>
+      <input
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        placeholder="Email"
+        className="w-full p-2 border rounded"
+      />
+      {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
-      <div>
-        <label className="block text-sm font-medium">Age</label>
-        <input
-          type="number"
-          name="age"
-          value={formData.age}
-          onChange={handleChange}
-          className="w-full mt-1 p-2 border rounded-lg"
-          min={18}
-        />
-        {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
-      </div>
+      <input
+        type="number"
+        name="age"
+        value={formData.age}
+        onChange={handleChange}
+        placeholder="Age"
+        min={18}
+        className="w-full p-2 border rounded"
+      />
+      {errors.age && <p className="text-red-500 text-sm">{errors.age}</p>}
 
-      
-      <div>
-        <label className="block text-sm font-medium">Role</label>
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="w-full mt-1 p-2 border rounded-lg"
-        >
-          <option value="">Select role</option>
-          <option value="manager">Manager</option>
-          <option value="developer">Developer</option>
-          <option value="designer">Designer</option>
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
-        </select>
-        {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
-      </div>
+      <select name="role" value={formData.role} onChange={handleChange} className="w-full p-2 border rounded">
+        <option value="">Select role</option>
+        <option value="admin">Admin</option>
+        <option value="manager">Manager</option>
+        <option value="developer">Developer</option>
+        <option value="designer">Designer</option>
+        <option value="user">User</option>
+      </select>
+      {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
 
-      
-      <div>
-        <label className="block text-sm font-medium">Profile Image URL</label>
-        <input
-          type="url"
-          name="image_url"
-          value={formData.image_url|| ""}
-          onChange={handleChange}
-          className="w-full mt-1 p-2 border rounded-lg"
-          placeholder="https://example.com/profile.jpg"
-        />
-        {errors.image_url && (
-          <p className="text-red-500 text-sm">{errors.image_url}</p>
-        )}
-      </div>
+      <input
+        type="url"
+        name="image_url"
+        value={formData.image_url || ""}
+        onChange={handleChange}
+        placeholder="Profile Image URL"
+        className="w-full p-2 border rounded"
+      />
 
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-      >
-        {isEdit ? "Update User" : "Save User"}
+      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded">
+        {isEdit ? "Update User" : "Add User"}
       </button>
     </form>
   );

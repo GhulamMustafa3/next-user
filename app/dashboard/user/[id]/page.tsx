@@ -5,12 +5,14 @@ import { useParams, useRouter } from "next/navigation";
 import UserDetail from "@/components/UserDetail";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
+
 interface User {
-  id: string | number;
+  id: string;
   name: string;
   email: string;
   role: string;
-  // add other fields your API returns
+  age?: number;
+  image_url?: string;
 }
 
 export default function UserDetailPage() {
@@ -28,16 +30,16 @@ export default function UserDetailPage() {
         });
 
         if (res.status === 401) {
-          router.push("/auth/login"); // ✅ ensure leading slash
+          router.push("/auth/login"); 
           return;
         }
 
         const data: User = await res.json();
         setCurrentUser(data);
 
-        // ✅ if user tries to access a profile that doesn’t match their own
+        
         if (String(data.id) !== String(id)) {
-          router.push(`/users/${data.id}`);
+          router.push(`/dashboard/user/${data.id}`);
           return;
         }
       } catch (err) {
@@ -68,7 +70,7 @@ export default function UserDetailPage() {
 
   return (
     <main className="p-6">
-      {/* <UserDetail user={currentUser} /> */}
+      <UserDetail user={currentUser} />
     </main>
   );
 }

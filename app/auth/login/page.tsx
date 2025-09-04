@@ -3,12 +3,14 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     });
+    const [showPassword, setShowPassword] = useState(false);
     const [message, setMessage] = useState("");
     const router = useRouter();
 
@@ -26,16 +28,13 @@ export default function LoginPage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
-                credentials: "include", 
+                credentials: "include",
             });
 
             const data = await res.json();
 
             if (res.ok) {
-              
                 localStorage.setItem("role", data.user.role);
-
-               
                 router.push("/dashboard");
             } else {
                 setMessage(data.error || "Login failed");
@@ -50,7 +49,7 @@ export default function LoginPage() {
             <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
                 <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleLogin} className="relative">
                     <input
                         type="email"
                         name="email"
@@ -60,15 +59,29 @@ export default function LoginPage() {
                         className="w-full p-2 mb-4 border rounded-lg"
                         required
                     />
-                    <input
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="w-full p-2 mb-6 border rounded-lg"
-                        required
-                    />
+
+                    <div className="relative mb-6">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded-lg pr-10"
+                            required
+                        />
+                        <div
+                            className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? (
+                                <EyeOff size={20} />
+                            ) : (
+                                <Eye size={20} />
+                            )}
+                        </div>
+                    </div>
+
                     <button
                         type="submit"
                         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
